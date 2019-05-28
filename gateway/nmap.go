@@ -14,8 +14,10 @@ type NmapGateway interface {
 }
 
 type nmapGateway struct {
-	targets string
-	group   singleflight.Group
+	targets    string
+	group      singleflight.Group
+	lastUpdate time.Time
+	cache      []net.IP
 }
 
 func NewNmapGateway(targets string) NmapGateway {
@@ -25,12 +27,25 @@ func NewNmapGateway(targets string) NmapGateway {
 	}
 }
 
+func (g *nmapGateway) cacheHasExpired() bool {
+	return g.cache == nil || time.Since(g.lastUpdate) > time.Second
+}
+
 func (g *nmapGateway) ScanSubnet(ctx context.Context) ([]net.IP, error) {
+	if !g.cacheHasExpired() {
+		return g.cache, nil
+	}
+
 	result, err, _ := g.group.Do("scanSubnet", func() (interface{}, error) {
 		return g.scanSubnetNotCached(ctx)
 	})
+	if err != nil {
+		return nil, err
+	}
 
-	return result.([]net.IP), err
+	g.cache = result.([]net.IP)
+	g.lastUpdate = time.Now()
+	return result.([]net.IP), nil
 
 }
 
