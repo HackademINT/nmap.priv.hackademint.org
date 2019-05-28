@@ -49,7 +49,7 @@ func index(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("content-type", "application/json")
 	w.Write([]byte(`{"author": "zTeeed", 
 			 "follow_me": "https://github.com/zteeed", 
-			 "paths": {"0": "/ip", "1": "/ip"}}`))
+			 "paths": {"0": "/ip"}}`))
 }
 
 func ip(w http.ResponseWriter, r *http.Request) {
