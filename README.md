@@ -11,7 +11,16 @@ pip3 install -r requirements.txt
 
 ### go
 
+```
+wget https://dl.google.com/go/go1.12.2.linux-amd64.tar.gz
+tar -xvf go1.12.2.linux-amd64.tar.gz
+sudo mv go /usr/local
+export GOROOT=/usr/local/go
+export GOPATH=/root/nmap.priv.hackademint.org
+export PATH=$GOPATH/bin:$GOROOT/bin:$PATH
 
+go get -u github.com/Ullaakut/nmap
+```
 
 ## Troubleshooting
 
