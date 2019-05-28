@@ -26,6 +26,7 @@ func (h *ipHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	ipAddresses, err := h.gateway.ScanSubnet(ctx)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
+		return
 	}
 
 	w.Header().Set("Content-Type", "application/json")
