@@ -1,5 +1,8 @@
 # nmap.priv.hackademint.org
 
+python api: https://nmap.hackademint.org
+go api: https://nmap2.hackademint.org
+
 ## Install 
 
 ### python
@@ -20,6 +23,7 @@ export GOPATH=/root/nmap.priv.hackademint.org
 export PATH=$GOPATH/bin:$GOROOT/bin:$PATH
 
 go get -u github.com/Ullaakut/nmap
+go build main.go
 ```
 
 ## Troubleshooting
@@ -51,6 +55,7 @@ FI
 
 ## systemd
 
+### python
 
 `/etc/systemd/system/nmap.service`
 
@@ -71,4 +76,26 @@ WantedBy=default.target
 ```bash
 systemctl enable nmap.service
 systemctl start nmap.service
+```
+
+### go
+
+
+`cat /etc/systemd/system/nmap2.service`
+```bash
+[Unit]
+Description=Nmap2
+
+[Service]
+ExecStart=/root/nmap.priv.hackademint.org/main
+User=root
+Group=root
+
+[Install]
+WantedBy=default.target
+```
+
+```bash
+systemctl enable nmap2.service
+systemctl start nmap2.service
 ```
