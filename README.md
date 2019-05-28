@@ -1,7 +1,7 @@
 # nmap.priv.hackademint.org
 
-python api: https://nmap.hackademint.org
-go api: https://nmap2.hackademint.org
+- python api: https://nmap.priv.hackademint.org
+- go api: https://nmap2.priv.hackademint.org
 
 ## Install 
 
