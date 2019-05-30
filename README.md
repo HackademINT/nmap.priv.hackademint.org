@@ -22,36 +22,45 @@ export GOROOT=/usr/local/go
 export GOPATH=/root/nmap.priv.hackademint.org
 export PATH=$GOPATH/bin:$GOROOT/bin:$PATH
 
-go get -u github.com/Ullaakut/nmap
+go get -u github.com/HackademINT/nmap.priv.hackademint.org/handler
+go get -u github.com/HackademINT/nmap.priv.hackademint.org/gateway
 go build main.go
 ```
 
-## Troubleshooting
+## Benchmarking
 
-### No module named 'flask.ext'
+tool: [https://github.com/wg/wrk](https://github.com/wg/wrk)
 
-IF
-
-```bash
-Traceback (most recent call last):
-  File "./main.py", line 9, in <module>
-    cache = Cache(app,config={'CACHE_TYPE': 'simple'})
-  File "/usr/local/lib/python3.5/dist-packages/flask_cache/__init__.py", line 121, in __init__
-    self.init_app(app, config)
-  File "/usr/local/lib/python3.5/dist-packages/flask_cache/__init__.py", line 156, in init_app
-    from .jinja2ext import CacheExtension, JINJA_CACHE_ATTR_NAME
-  File "/usr/local/lib/python3.5/dist-packages/flask_cache/jinja2ext.py", line 33, in <module>
-    from flask.ext.cache import make_template_fragment_key
-ImportError: No module named 'flask.ext'
-```
-
-THEN
+### python
 
 ```bash
-sed -i 's|flask.ext.cache|flask_cache|g' /usr/local/lib/python3.5/dist-packages/flask_cache/jinja2ext.py 
+wrk -t12 -c400 -d30s https://nmap.priv.hackademint.org/ip
+Running 30s test @ https://nmap.priv.hackademint.org/ip
+  12 threads and 400 connections
+  Thread Stats   Avg      Stdev     Max   +/- Stdev
+    Latency   349.17ms  350.91ms   2.00s    83.16%
+    Req/Sec    92.69     35.54   232.00     69.16%
+  27006 requests in 30.10s, 9.56MB read
+  Socket errors: connect 0, read 0, write 0, timeout 410
+Requests/sec:    897.25
+Transfer/sec:    325.08KB
 ```
 
-FI
+### go
+
+```bash
+wrk -t12 -c400 -d30s https://nmap2.priv.hackademint.org
+Running 30s test @ https://nmap2.priv.hackademint.org
+  12 threads and 400 connections
+  Thread Stats   Avg      Stdev     Max   +/- Stdev
+    Latency   236.34ms  274.40ms   1.99s    90.01%
+    Req/Sec   181.60     84.02   373.00     67.99%
+  57111 requests in 30.07s, 14.05MB read
+  Socket errors: connect 0, read 0, write 0, timeout 231
+Requests/sec:   1899.18
+Transfer/sec:    478.44KB
+```
+
 
 ## systemd
 
@@ -99,3 +108,30 @@ WantedBy=default.target
 systemctl enable nmap2.service
 systemctl start nmap2.service
 ```
+
+## Troubleshooting
+
+### No module named 'flask.ext'
+
+IF
+
+```bash
+Traceback (most recent call last):
+  File "./main.py", line 9, in <module>
+    cache = Cache(app,config={'CACHE_TYPE': 'simple'})
+  File "/usr/local/lib/python3.5/dist-packages/flask_cache/__init__.py", line 121, in __init__
+    self.init_app(app, config)
+  File "/usr/local/lib/python3.5/dist-packages/flask_cache/__init__.py", line 156, in init_app
+    from .jinja2ext import CacheExtension, JINJA_CACHE_ATTR_NAME
+  File "/usr/local/lib/python3.5/dist-packages/flask_cache/jinja2ext.py", line 33, in <module>
+    from flask.ext.cache import make_template_fragment_key
+ImportError: No module named 'flask.ext'
+```
+
+THEN
+
+```bash
+sed -i 's|flask.ext.cache|flask_cache|g' /usr/local/lib/python3.5/dist-packages/flask_cache/jinja2ext.py 
+```
+
+FI
