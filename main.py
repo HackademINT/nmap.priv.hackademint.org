@@ -3,7 +3,7 @@
 import nmap, socket, struct
 from socket import inet_aton
 from flask import Flask, jsonify
-from flask_cache import Cache
+from flask_caching import Cache
 
 
 app = Flask(__name__)
@@ -16,23 +16,23 @@ def scan_subnet(subnet):
     return nmap.PortScanner().scan(hosts=subnet, arguments="-sP")
 
 
-@cache.cached(timeout=1000)
 @app.route('/')
+@cache.cached(timeout=1000)
 def index():
     d = {'author': 'zTeeed', 'follow_me': 'https://github.com/zteeed', 
          'paths': {0: '/scan', 1: '/ip'}}
     return jsonify(d)
 
 
-@cache.cached(timeout=60)
 @app.route('/scan')
+@cache.cached(timeout=60)
 def scan():
     result = scan_subnet(SUBNET)
     return jsonify(result)
 
 
-@cache.cached(timeout=60)
 @app.route('/ip')
+@cache.cached(timeout=60)
 def ip(d = {}):
     result = scan_subnet(SUBNET)
     ips = sorted(result['scan'].keys(), key=lambda ip: socket.inet_aton(ip))
