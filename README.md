@@ -49,18 +49,16 @@ Transfer/sec:    325.08KB
 ### go
 
 ```bash
-wrk -t12 -c400 -d30s https://nmap2.priv.hackademint.org
 Running 30s test @ https://nmap2.priv.hackademint.org
   12 threads and 400 connections
   Thread Stats   Avg      Stdev     Max   +/- Stdev
-    Latency   236.34ms  274.40ms   1.99s    90.01%
-    Req/Sec   181.60     84.02   373.00     67.99%
-  57111 requests in 30.07s, 14.05MB read
-  Socket errors: connect 0, read 0, write 0, timeout 231
-Requests/sec:   1899.18
-Transfer/sec:    478.44KB
+    Latency   313.44ms   50.50ms   1.09s    70.78%
+    Req/Sec   105.29     45.24   282.00     64.71%
+  36346 requests in 30.09s, 8.94MB read
+Requests/sec:   1208.01
 ```
 
+> No Socket errors
 
 ## systemd
 
