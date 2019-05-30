@@ -46,11 +46,8 @@ func mapIPToStrings(ipAddresses []net.IP) []string {
 
 }
 func sortIPAddresses(ipAddresses []net.IP) []net.IP {
-	result := make([]net.IP, 0, len(ipAddresses))
-
-	for _, ip := range ipAddresses {
-		result = append(result, ip)
-	}
+	result := make([]net.IP, len(ipAddresses))
+	copy(result, ipAddresses)
 
 	sort.Slice(result, func(i, j int) bool {
 		return bytes.Compare(result[i], result[j]) < 0
