@@ -9,15 +9,16 @@ import (
 	"golang.org/x/sync/singleflight"
 )
 
+const _cacheDuration = 1 * time.Minute
+
 type NmapGateway interface {
 	ScanSubnet(ctx context.Context) ([]net.IP, error)
 }
 
 type nmapGateway struct {
-	targets    string
-	group      singleflight.Group
-	lastUpdate time.Time
-	cache      []net.IP
+	targets string
+	group   singleflight.Group
+	cache   []net.IP
 }
 
 func NewNmapGateway(targets string) NmapGateway {
@@ -27,29 +28,23 @@ func NewNmapGateway(targets string) NmapGateway {
 	}
 }
 
-func (g *nmapGateway) cacheHasExpired() bool {
-	return g.cache == nil || time.Since(g.lastUpdate) > time.Second
-}
-
 func (g *nmapGateway) ScanSubnet(ctx context.Context) ([]net.IP, error) {
-	if !g.cacheHasExpired() {
+	if g.cache != nil {
 		return g.cache, nil
 	}
 
 	result, err, _ := g.group.Do("scanSubnet", func() (interface{}, error) {
-		return g.scanSubnetNotCached(ctx)
+		return g.refreshCache(ctx)
 	})
 	if err != nil {
 		return nil, err
 	}
 
-	g.cache = result.([]net.IP)
-	g.lastUpdate = time.Now()
 	return result.([]net.IP), nil
 
 }
 
-func (g *nmapGateway) scanSubnetNotCached(ctx context.Context) ([]net.IP, error) {
+func (g *nmapGateway) refreshCache(ctx context.Context) ([]net.IP, error) {
 	ctx, cancel := context.WithTimeout(ctx, 1*time.Minute)
 	defer cancel()
 
@@ -76,5 +71,10 @@ func (g *nmapGateway) scanSubnetNotCached(ctx context.Context) ([]net.IP, error)
 		ipAddresses = append(ipAddresses, net.ParseIP(host.Addresses[0].String()))
 	}
 
+	g.cache = ipAddresses
+	go func() {
+		<-time.NewTimer(_cacheDuration).C
+		g.cache = nil
+	}()
 	return ipAddresses, nil
 }
