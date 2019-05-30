@@ -34,28 +34,31 @@ tool: [https://github.com/wg/wrk](https://github.com/wg/wrk)
 ### python
 
 ```bash
-wrk -t12 -c400 -d30s https://nmap.priv.hackademint.org/ip
-Running 30s test @ https://nmap.priv.hackademint.org/ip
+wrk -t12 -c400 -d30s http://localhost:5000/ip
+Running 30s test @ http://localhost:5000/ip
   12 threads and 400 connections
   Thread Stats   Avg      Stdev     Max   +/- Stdev
-    Latency   349.17ms  350.91ms   2.00s    83.16%
-    Req/Sec    92.69     35.54   232.00     69.16%
-  27006 requests in 30.10s, 9.56MB read
-  Socket errors: connect 0, read 0, write 0, timeout 410
-Requests/sec:    897.25
-Transfer/sec:    325.08KB
+    Latency    82.80ms   71.96ms   1.74s    98.30%
+    Req/Sec   149.10     93.70   444.00     59.76%
+  51391 requests in 30.10s, 260.20MB read
+  Socket errors: connect 0, read 55, write 0, timeout 40
+Requests/sec:   1707.60
+Transfer/sec:      8.65MB
+
 ```
 
 ### go
 
 ```bash
-Running 30s test @ https://nmap2.priv.hackademint.org
+wrk -t12 -c400 -d30s http://localhost:5001/ip
+Running 30s test @ http://localhost:5001/ip
   12 threads and 400 connections
   Thread Stats   Avg      Stdev     Max   +/- Stdev
-    Latency   313.44ms   50.50ms   1.09s    70.78%
-    Req/Sec   105.29     45.24   282.00     64.71%
-  36346 requests in 30.09s, 8.94MB read
-Requests/sec:   1208.01
+    Latency    18.30ms   24.65ms 338.61ms   86.28%
+    Req/Sec     3.83k   606.50     7.80k    68.25%
+  1376244 requests in 30.08s, 4.95GB read
+Requests/sec:  45745.51
+Transfer/sec:    168.40MB
 ```
 
 > No Socket errors
