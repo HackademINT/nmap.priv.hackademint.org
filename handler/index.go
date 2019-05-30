@@ -28,5 +28,5 @@ func NewIndexHandler() (http.Handler, error) {
 func (h *indexHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
-	json.NewEncoder(w).Encode(h.jsonResult)
+	w.Write(h.jsonResult)
 }
